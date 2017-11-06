@@ -39,7 +39,7 @@ except Exception as err:
 # Insertions:  I commented these out after the first
 # run successfuly inserted them
 # 
-
+"""
 record = { "type": "dated_memo", 
            "date":  arrow.utcnow().naive,
            "text": "This is a sample memo"
@@ -57,7 +57,7 @@ record = { "type": "dated_memo",
 print("Inserting 2")
 collection.insert(record)
 print("Inserted")
-
+"""
 
 #
 # Read database --- May be useful to see what is in there,
