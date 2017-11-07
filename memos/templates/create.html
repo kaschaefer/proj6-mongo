@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>New Memo</title>
+
+  <!-- 'viewport' is used by bootstrap to respond to device size -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Javascript:  JQuery from a content distribution network (CDN) -->
+  <script
+     src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
+  </script>
+
+  <!-- Bootstrap includes javascript and css  (must follow jquery) -->
+  <link rel="stylesheet"
+   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+   <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
+</script>
+
+  <!-- moment.js is the JavaScript equivalent of arrow.py -->
+  <script 
+  src="{{ url_for('static', filename="js/moment.min.js") }}"></script>
+
+</head>
+<body>
+<div class="container">
+
+    <div>
+        <label>Date and Time for Memo</label>
+        <input type=date name="begin_date" id="begin_date" value="2018-01-01" />
+        <input type=time name="begin_time" id="begin_time" value="00:00"    /><br><br>
+        <label>Memo</label><br>
+        <textarea name="memo" id="memo" value ="" style="height: 50%; width:50%;"/> </textarea>
+        <br><br>
+        <button id="reset" type="reset" value="Reset">Reset</button>
+        <button id="submit" type="button" value="Submit">Submit</button>
+        <button id="cancel" type="button" value="Cancel">Cancel</button> 
+    </div>
+
+<script>
+$(document).ready(function() { 
+    $("#submit").click(function(){
+        var start_time = $("input[name='begin_time']").val();
+        var start_date = $("input[name='begin_date']").val();
+        var start = moment(start_date + start_time).toISOString();
+        var memo_txt = $("#memo").val();
+        console.log("The memo to add is :" + memo_txt);
+        console.log(start + " should be an ISO string");
+        $.getJSON("/add_memo", {date: start, memo_text: memo_txt},
+            function(data){
+                success = data.result
+                if (success) {
+                    window.location.replace("/index");
+                }
+                else{
+                    $("#memo").val("Something went wrong with adding your memo to the database!");
+                }
+            })
+    });
+    $("#reset").click(function(){
+        $("#memo").val("");
+        $("#begin_date").val("2018-01-01");
+        $("#begin_time").val("00:00");
+    });
+    $("#cancel").click(function(){
+        window.location.replace("/index");
+    })
+});
+
+function add_memo(){
+
+}
+</script>
+
+</div> <!-- container -->
+</body>
+</html>

@@ -58,7 +58,7 @@ app.secret_key = CONFIG.SECRET_KEY
 
 try: 
     dbclient = MongoClient(MONGO_CLIENT_URL)
-    db = getattr(dbclient, CONFIG.DB)
+    db = getattr(dbclient, str(CONFIG.DB))
     collection = db.dated
 
 except:
@@ -82,11 +82,37 @@ def index():
 
 
 # We don't have an interface for creating memos yet
-# @app.route("/create")
-# def create():
-#     app.logger.debug("Create")
-#     return flask.render_template('create.html')
+@app.route("/create")
+def create():
+    app.logger.debug("Create")
+    return flask.render_template('create.html')
 
+@app.route("/add_memo")
+def add_memo():
+    """
+    Take inputs from create page and generate new DB entry
+    """
+    app.logger.debug("Creating a new memo")
+    memo_type = "dated_memo"
+    memo_date = request.args.get('date', type=str)
+    memo_text = request.args.get('memo_text', type=str)
+    record = { "type": memo_type,
+               "date": memo_date, #TODO:: Change memo_date to an ISO String
+               "text": memo_text
+    }
+    collection.insert(record)
+    app.logger.debug("New memo has been inserted. Returning to index page")
+    rslt = True
+    return flask.jsonify(result=rslt)
+
+@app.route("/delete_memo")
+def delete_memo():
+    """
+    Takes memo ID from client and deletes that DB entry
+    """
+    app.logger.debug("Deleting a memo")
+    memo_id = request.args.get('memo', type=str)
+    result = collection.delete_one({'_id': memo_id})
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -137,7 +163,6 @@ def get_memos():
     records = [ ]
     for record in collection.find( { "type": "dated_memo" } ):
         record['date'] = arrow.get(record['date']).isoformat()
-        del record['_id']
         records.append(record)
     return records 
 

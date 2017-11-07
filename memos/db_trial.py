@@ -25,7 +25,7 @@ print("Using URL '{}'".format(MONGO_CLIENT_URL))
 
 try: 
     dbclient = MongoClient(MONGO_CLIENT_URL)
-    db = getattr(dbclient, CONFIG.DB)
+    db = getattr(dbclient, str(CONFIG.DB))
     print("Got database")
     collection = db.dated
     print("Using sample collection")
@@ -39,7 +39,7 @@ except Exception as err:
 # Insertions:  I commented these out after the first
 # run successfuly inserted them
 # 
-"""
+
 record = { "type": "dated_memo", 
            "date":  arrow.utcnow().naive,
            "text": "This is a sample memo"
@@ -57,7 +57,6 @@ record = { "type": "dated_memo",
 print("Inserting 2")
 collection.insert(record)
 print("Inserted")
-"""
 
 #
 # Read database --- May be useful to see what is in there,

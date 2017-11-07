@@ -47,7 +47,9 @@
   </div>
   <div class="col-md-10">
     {{ memo.text }}
+    <button type="button" name="del-button" value="Delete" id="{{ memo._id }}">Delete</button>
   </div>
+  <br>
   </div> <!-- row -->
   </div> <!-- memo -->
   {% endfor %}
@@ -55,7 +57,28 @@
   <p>No memos for you. </p>  
 {% endif %}
 
- 
+<script>
+$(document).ready(function() {
+  $('button[name="del-button"]').click(function(){
+      console.log(this.id + " is the ID of the memo to be deleted");
+      deleteMemo(this.id);
+  }); 
+});
+
+function deleteMemo(memo_id) {
+  $.getJSON("/delete_memo", {memo_id: memo_id},
+  
+            function(data){
+                success = data.result
+                if (success) {
+                    window.location.replace("/index");
+                }
+                else{
+                    $("#memo").val("Something went wrong with adding your memo to the database!");
+                }
+            })
+}
+</script> 
 
 </div> <!-- container -->
 </body>
