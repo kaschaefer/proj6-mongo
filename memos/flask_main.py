@@ -101,10 +101,13 @@ def add_memo():
                "date": memo_date, #TODO:: Change memo_date to an ISO String
                "text": memo_text
     }
-    collection.insert(record)
-    app.logger.debug("New memo has been inserted. Returning to index page")
-    rslt = True
+    inserted = collection.insert(record)
+    if (inserted):
+        rslt = True
+    else:
+        rslt = False
     return flask.jsonify(result=rslt)
+    
 
 @app.route("/delete_memo")
 def delete_memo():

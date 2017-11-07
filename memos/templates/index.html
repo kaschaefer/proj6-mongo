@@ -42,12 +42,12 @@
     {% for memo in g.memos %}
   <div class="memo">
   <div class="row">
-  <div class="col-md-2">
-    {{ memo.date | humanize }}
+  <div class="col-md-2 memohead">
+   {{ memo.date | humanize }}
   </div>
   <div class="col-md-10">
     {{ memo.text }}
-    <button type="button" class="btn pull-right" name="del-button" value="Delete" id="{{ memo._id }}">Delete</button>
+    <button type="button" class="btn pull-right button" name="del-button" value="Delete" id="{{ memo._id }}">Delete</button>
   </div>
   <br><br>
   </div> <!-- row -->
@@ -57,7 +57,7 @@
   <p>No memos for you. </p>  
 {% endif %}
 <div>
-  <button id="create" type="button" value="Create A New Memo">Create A New Memo</button>
+  <button id="create" type="button" class="button button2" value="Create A New Memo">Create A New Memo</button>
 </div>
 
 <script>
@@ -74,7 +74,6 @@ $(document).ready(function() {
 
 function deleteMemo(memo_id) {
   $.getJSON("/delete_memo", {memo_id: memo_id},
-  
             function(data){
                 num_deleted = data.result
                 if (num_deleted) {
