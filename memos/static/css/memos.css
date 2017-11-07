@@ -10,6 +10,11 @@
     font-style: italic;
 }
 
+.pull-right {
+    float: right !important;
+  }
+
 .attribution  {
     font-size: smaller;
 }
+

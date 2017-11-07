@@ -17,6 +17,7 @@ from flask import g
 from flask import render_template
 from flask import request
 from flask import url_for
+from bson.objectid import ObjectId
 
 import json
 import logging
@@ -111,8 +112,12 @@ def delete_memo():
     Takes memo ID from client and deletes that DB entry
     """
     app.logger.debug("Deleting a memo")
-    memo_id = request.args.get('memo', type=str)
-    result = collection.delete_one({'_id': memo_id})
+    _id = request.args.get('memo_id')
+    app.logger.debug(_id)
+    reslt = collection.delete_one({'_id': ObjectId(_id)})
+    num_deleted = reslt.deleted_count
+    app.logger.debug("num deleted is " + str(num_deleted))
+    return flask.jsonify(result=num_deleted)
 
 @app.errorhandler(404)
 def page_not_found(error):
