@@ -94,20 +94,26 @@ def add_memo():
     Take inputs from create page and generate new DB entry
     """
     app.logger.debug("Creating a new memo")
-    memo_type = "dated_memo"
-    memo_date = request.args.get('date', type=str)
-    memo_text = request.args.get('memo_text', type=str)
-    record = { "type": memo_type,
-               "date": memo_date, #TODO:: Change memo_date to an ISO String
-               "text": memo_text
-    }
-    inserted = collection.insert(record)
-    if (inserted):
-        rslt = True
-    else:
-        rslt = False
+    rslt = add_new_memo("dated_memo", request.args.get('date', type=str), memo_text = request.args.get('memo_text', type=str))
     return flask.jsonify(result=rslt)
-    
+
+def add_new_memo(memo_type, memo_date, memo_text):
+    """
+    Helper function to create new memo
+    """
+    record = { "type": memo_type,
+        "date": memo_date,
+        "text": memo_text
+    }
+    try:
+        inserted = collection.insert_one(record)
+        _id = inserted.inserted_id.valueOf()
+        rslt = True
+    except:
+        app.logger.debug("Deletion of memo failed")
+        _id = "0"
+        rslt = False
+    return {"result": rslt, "id": _id}
 
 @app.route("/delete_memo")
 def delete_memo():
@@ -115,12 +121,24 @@ def delete_memo():
     Takes memo ID from client and deletes that DB entry
     """
     app.logger.debug("Deleting a memo")
-    _id = request.args.get('memo_id')
-    app.logger.debug(_id)
-    reslt = collection.delete_one({'_id': ObjectId(_id)})
-    num_deleted = reslt.deleted_count
-    app.logger.debug("num deleted is " + str(num_deleted))
+    num_deleted = del_memo(request.args.get('memo_id'))
     return flask.jsonify(result=num_deleted)
+
+def del_memo(id):
+    """
+    Helper function to delete a memo
+    """
+    _id = id
+    app.logger.debug("Deleting memo with id: " + _id)
+    try:
+        reslt = collection.delete_one({'_id': ObjectId(_id)})
+        num_deleted = reslt.deleted_count   #deleted_count will = 1 if memo was deleted
+    except:
+        app.logger.debug("Memo was not deleted")
+        num_deleted = 0
+    return num_deleted
+    
+
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -172,7 +190,10 @@ def get_memos():
     for record in collection.find( { "type": "dated_memo" } ):
         record['date'] = arrow.get(record['date']).isoformat()
         records.append(record)
-    return records 
+    app.logger.debug(records)
+    sorted_records = sorted(records, key=lambda k: k['date'])
+    app.logger.debug(sorted_records)
+    return sorted_records
 
 
 if __name__ == "__main__":

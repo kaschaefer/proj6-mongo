@@ -3,3 +3,4 @@ arrow
 gunicorn
 pymongo
 bson
+nose

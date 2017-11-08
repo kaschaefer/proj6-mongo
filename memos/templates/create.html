@@ -44,8 +44,9 @@
 $(document).ready(function() { 
     $("#submit").click(function(){
         var start_time = $("input[name='begin_time']").val();
+        console.log(start_time);
         var start_date = $("input[name='begin_date']").val();
-        var start = moment(start_date + start_time).toISOString();  //Create ISO String from Start Date/Time
+        var start = moment(start_date + ' ' + start_time).toISOString();
         var memo_txt = $("#memo").val();
         
         console.log("The memo to add is :" + memo_txt);
